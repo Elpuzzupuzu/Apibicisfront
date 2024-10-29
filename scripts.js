@@ -1,5 +1,6 @@
 // URL base de la API
-const apiUrl = 'https://bicis.onrender.com/bicicletas';
+const apiUrl = 'https://bicis-aopy.onrender.com/bicicletas';
+const ventasUrl = 'https://bicis-aopy.onrender.com/ventas'; // URL para las ventas
 
 // Función para listar todas las bicicletas
 async function listarBicicletas() {
@@ -50,6 +51,54 @@ async function listarBicicletas() {
     }
 }
 
+// Función para listar todas las ventas
+async function listarVentas() {
+    const token = localStorage.getItem('token'); // Obtener el token de localStorage
+
+    const response = await fetch(ventasUrl, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // Incluir el token en el encabezado
+        }
+    });
+
+    // Verifica si el token ha caducado o es inválido
+    if (response.status === 401 || response.status === 403) {
+        alert('Tu sesión ha caducado. Por favor, inicia sesión de nuevo.');
+        localStorage.clear(); // Vaciar el localStorage
+        window.location.href = 'login.html'; // Cambia a la ruta de tu página de inicio de sesión
+        return;
+    }
+
+    if (!response.ok) {
+        // Manejo del error en otros códigos de error
+        const errorData = await response.json();
+        alert(`Error: ${errorData.message}`);
+        return;
+    }
+
+    const ventas = await response.json();
+    const tbody = document.querySelector("#tablaVentas tbody");
+    tbody.innerHTML = '';
+
+    // Asegúrate de que ventas sea un array
+    if (Array.isArray(ventas)) {
+        ventas.forEach(venta => {
+            const row = `<tr>
+                <td>${venta.id}</td>
+                <td>${venta.bicicletaId}</td>
+                <td>${new Date(venta.fecha).toLocaleDateString()}</td>
+                <td>${venta.precio}</td>
+                <td>${venta.cliente}</td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+    } else {
+        console.error('La respuesta no es un array:', ventas);
+    }
+}
+
 // Función para agregar una nueva bicicleta
 document.getElementById('formBici').addEventListener('submit', async (event) => {
     event.preventDefault(); // Prevenir el comportamiento predeterminado del formulario
@@ -94,9 +143,6 @@ document.getElementById('formBici').addEventListener('submit', async (event) => 
         listarBicicletas(); // Recarga la lista de bicicletas
     } else {
         const errorData = await response.json();
-        alert(`Error al agregar la bicicleta: ${errorData.message}`);
+        alert(`Error al agregar bicicleta: ${errorData.message}`);
     }
 });
-
-// Llama a la función para listar bicicletas al cargar la página
-listarBicicletas();
