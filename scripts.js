@@ -1,6 +1,6 @@
 // URL base de la API
 const apiUrl = 'https://bicis-aopy.onrender.com/bicicletas';
-const ventasUrl = 'https://bicis-aopy.onrender.com/ventas'; // URL para las ventas
+const ventasUrl = 'https://bicis-aopy.onrender.com/ventas/todas'; // URL para las ventas
 
 // Función para listar todas las bicicletas
 async function listarBicicletas() {
@@ -85,12 +85,13 @@ async function listarVentas() {
     // Asegúrate de que ventas sea un array
     if (Array.isArray(ventas)) {
         ventas.forEach(venta => {
+            console.log(venta); // Agregar esta línea para ver el objeto de venta completo
             const row = `<tr>
-                <td>${venta.id}</td>
-                <td>${venta.bicicletaId}</td>
-                <td>${new Date(venta.fecha).toLocaleDateString()}</td>
-                <td>${venta.precio}</td>
-                <td>${venta.cliente}</td>
+                <td>${venta.id_venta}</td>
+                <td>${venta.id_user}</td>
+                <td>${new Date(venta.date_sell).toLocaleDateString()}</td>
+                <td>${venta.articulos}</td>
+                <td>${venta.total_compra}</td>
             </tr>`;
             tbody.innerHTML += row;
         });

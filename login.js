@@ -4,7 +4,7 @@ document.getElementById('registerForm').addEventListener('submit', async (event)
     const email = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
 
-    const response = await fetch('https://bicis.onrender.com/auth/register', {
+    const response = await fetch('https://bicis-aopy.onrender.com/auth/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
